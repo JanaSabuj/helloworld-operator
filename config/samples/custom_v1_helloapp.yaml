@@ -10,3 +10,4 @@ metadata:
   name: helloapp-sample
 spec:
   # TODO(user): Add fields here
+  size: 5
