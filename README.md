@@ -6,3 +6,5 @@ My first kubernetes operator
 - kubebuilder create api --group custom --version v1 --kind HelloApp
 
 - make help
+- make manifests (generate CRD)
+- make install (install the CRD into the cluster)

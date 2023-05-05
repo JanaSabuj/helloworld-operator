@@ -64,7 +64,7 @@ func (r *HelloAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	currentDeployment := &appsv1.Deployment{}
 	if err := r.Get(ctx, req.NamespacedName, currentDeployment); err != nil {
 		// No existing deployment
-		lg.Info("Deployment not found for CRD!", err)
+		lg.Info("Deployment not found for CRD!", "err msg", err.Error())
 		expectedDeployment := deriveExpectedDeploymentFromCRD(&helloApp, nil)
 
 		lg.Info("Creating a new Deployment", "Namespace: ", expectedDeployment.Namespace, "Name: ", expectedDeployment.Name)
@@ -74,9 +74,9 @@ func (r *HelloAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		}
 	} else {
 		// Update the existing deployment iff it needs updating
-		if helloApp.Spec.Size == *currentDeployment.Spec.Replicas {
-			return ctrl.Result{}, nil
-		}
+		// if helloApp.Spec.Size == *currentDeployment.Spec.Replicas {
+		// 	return ctrl.Result{}, nil
+		// }
 
 		updatedDeployment := deriveExpectedDeploymentFromCRD(&helloApp, currentDeployment)
 		lg.Info("Updating a new Deployment", "Namespace: ", updatedDeployment.Namespace, "Name: ", updatedDeployment.Name)
@@ -98,12 +98,12 @@ func (r *HelloAppReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 func deriveExpectedDeploymentFromCRD(helloApp *customv1.HelloApp, currentDeployment *appsv1.Deployment) *appsv1.Deployment {
 	newDeployment := &appsv1.Deployment{}
-	if currentDeployment != nil {
-		// update and return Dep
-		currentDeployment.DeepCopyInto(newDeployment)
-		*newDeployment.Spec.Replicas = helloApp.Spec.Size
-		return newDeployment
-	}
+	// if currentDeployment != nil {
+	// 	// update and return Dep
+	// 	currentDeployment.DeepCopyInto(newDeployment)
+	// 	*newDeployment.Spec.Replicas = helloApp.Spec.Size
+	// 	return newDeployment
+	// }
 
 	// Image
 	const PodImage string = "luksa/kubia"
@@ -132,6 +132,13 @@ func deriveExpectedDeploymentFromCRD(helloApp *customv1.HelloApp, currentDeploym
 						{
 							Name:  helloApp.Name,
 							Image: PodImage,
+							Ports: []corev1.ContainerPort{
+								{
+									Name:          "tcp",
+									ContainerPort: 8080,
+									Protocol:      corev1.ProtocolTCP,
+								},
+							},
 						},
 					},
 				},
