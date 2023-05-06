@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: hello-operator-controller
-          image: sabujjana/hello-operator:o1
+          image: sabujjana/helloworld-operator:o1
           imagePullPolicy: IfNotPresent
       serviceAccountName: controller-manager
