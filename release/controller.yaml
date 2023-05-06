@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-operator-deployment
+  namespace: hello-operator-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-operator-controller
+  template:
+    metadata:
+      labels:
+        app: hello-operator-controller
+    spec:
+      containers:
+        - name: hello-operator-controller
+          image: sabujjana/hello-operator:o1
+          imagePullPolicy: Always
+      serviceAccountName: controller-manager
